@@ -35,14 +35,30 @@ task :removefolders do
     system 'rm -rf dist'
 end
 
-task :js => :compass do
+task :css do
+    css_file = File.read 'config/css.json'
+    css_conf = JSON.parse(css_file)
+    Dir.mkdir('dist/') unless File.exists?('dist/')
+    Dir.mkdir('build/') unless File.exists?('build/')
+    Dir.mkdir('build/css/') unless File.exists?('build/css/')
+    css_conf.each do |conf|
+        file_name = conf["name"].gsub('##PROJECT_NAME##', getProjectName)
+        file_name = file_name.gsub('##VERSION##', getVersion)
+        system 'cp ' + conf["file"] + ' ' + 'dist/' + file_name
+        system 'cp ' + 'dist/' + file_name + ' ' + 'build/css/'
+    end
+    puts "DONE"
+end
+
+task :js => :required do
     build_file = File.read 'config/build.json'
     sources = JSON.parse(build_file)
     sources.each do |source|
         extension = source['target_ext']
-        puts "Generating: " + source['name'] + '-' + getVersion + "." + extension + " ..."
-        fileName = source['name'] + '-' + getVersion + "." + extension
-        fileNameMin = source['name'] + '-' + getVersion + ".min." + extension
+        file_name = source['name'].gsub('##PROJECT_NAME##', getProjectName)
+        file_name = file_name.gsub('##VERSION##', getVersion) + "." + extension
+        puts "Generating: " + file_name + " ..."
+        file_name_min = file_name + ".min." + extension
         writePath = source['target_path']
         files = source['files']
         buffer = ""
@@ -56,102 +72,40 @@ task :js => :compass do
             end
         end
         Dir.mkdir(writePath) unless File.exists?(writePath)
-        File.open(writePath + fileName, 'w+') do |file_write|
+        File.open(writePath + file_name, 'w+') do |file_write|
             file_write.write buffer
         end
-        File.open(writePath + fileNameMin, 'w+') do |file_write_min|
+        File.open(writePath + file_name_min, 'w+') do |file_write_min|
             file_write_min.write Closure::Compiler.new.compress(buffer)
         end
         puts "DONE"
     end
 end
 
-task :sample do
-    html = File.read 'src/sample/index.html'
+task :demo do
+    html = File.read 'src/demo/index.html'
     html['##VERSION##'] = getVersion
-    html['##APP##'] = getAppName
+    html['##PROJECT_NAME##'] = getProjectName
+    html['##VERSION##'] = getVersion
+    html['##PROJECT_NAME##'] = getProjectName
+    html['##PROJECT_NAME##'] = getProjectName
     html['##VERSION##'] = getVersion
     File.open("build/index.html", 'w+') do |file|
         file.write html
     end
-    system 'cp src/sample/app-sample.js build/app.js'
-    system 'cp src/sample/app-sample.css build/app.css'
-    system 'cp -r src/sample/lib build/.'
-    system 'cp -r src/img build/.'
-    system 'cp README.md build/README.md'
+    system 'cp src/demo/app.js build/app.js'
+    system 'cp -r src/demo/lib build/.'
 end
 
-desc "Build jCore Business Rule Control"
+desc "Build EasySelector"
 task :build do |t, args|
   Rake::Task['required'].execute
-  #Rake::Task['removefolders'].execute 
-  #Rake::Task['compass'].execute
-  #Rake::Task['js'].execute
-  #Rake::Task['sample'].execute
+  Rake::Task['removefolders'].execute 
+  Rake::Task['css'].execute
+  Rake::Task['js'].execute
+  Rake::Task['demo'].execute
   #Rake::Task['package'].execute
   puts "Project has been build correctly."
-end
-
-
-desc "Generate Files"
-task :files do
-    Rake::Task['required'].execute
-    Rake::Task['js'].execute
-end
-
-
-desc "Generate Documentation"
-task :docs do
-    Rake::Task['required'].execute
-    Rake::Task['doc'].execute
-end
-
-task :violations do
-    js_files = ""
-    css_files = ""
-
-    build_file = File.read 'config/build.json'
-    sources = JSON.parse(build_file)
-    sources.each do |source|
-        extension = source['target_ext']
-        fileName = source['name'] + '-' + getVersion + "." + extension
-        writePath = source['target_path']
-        if (source['lint_files'])
-            #if extension == 'js'
-                js_files += " " + writePath + fileName
-            # else
-            #     css_files += " " + writePath + fileName
-            # end
-        end
-    end
-
-    if js_files != ""
-        system "nodelint " + js_files + " --config config/jslint/jslint.js --reporter=xml > build/logs/jslint.xml"
-    end
-
-    # if css_files != ""
-    #     system "csslint " + css_files + " --format=checkstyle-xml > build/logs/checkstyle_css.xml"
-    #     system "csslint " + css_files + " --format=lint-xml > build/logs/csslint.xml"
-    # end
-end
-
-task :jasmine_ci do
-  puts "Starting JASMINE testing..."
-  system "jasmine-node specs/ --junitreport --output build/xunit/"
-  puts "JASMINE testing...DONE"
-end
-
-desc "Run Jasmine Tests"
-task :jasmine do
-   system "jasmine-node --matchall --verbose specs"
-end
-
-task :build_ci do
-    Rake::Task['required'].execute
-    Rake::Task['js'].execute
-    Rake::Task['doc'].execute
-    Rake::Task['jasmine_ci'].execute
-    Rake::Task['violations'].execute
 end
 
 task :package do
@@ -181,8 +135,8 @@ def getVersion
     exit
 end
 
-def getAppName
-    appname = File.read 'APP.txt'
+def getProjectName
+    appname = File.read 'PROJECT_NAME.txt'
     return appname
     exit
 end

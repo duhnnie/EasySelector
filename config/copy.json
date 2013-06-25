@@ -1,8 +1,14 @@
 [
     {
-        "name" : "##PROJECT_NAME##-##PROJECT_VERSION##",
-        "target_path": "build/css/",
-        "target_ext": "css",
-        "target_origin": "src/css/easyselect.css" 
+        "source" : "adam/tpls/*.tpl",
+        "target" : "SugarModules/modules/BpmInbox/tpls/"
+    },
+    {
+        "source" : "adam/img/*.*",
+        "target" : "SugarModules/modules/BpmInbox/img/"
+    },
+    {
+        "source" : "adam/lib/img/*.*",
+        "target" : "SugarModules/modules/BpmInbox/img/"
     }
 ]

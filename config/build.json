@@ -1,0 +1,11 @@
+[
+    {
+        "name" : "##PROJECT_NAME##-##PROJECT_VERSION##",
+        "target_path":"build/js/",
+        "target_ext": "js",
+        "lint_files": true,
+        "files": [
+            "src/js/easyselect.js"
+        ]
+    }
+]

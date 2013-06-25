@@ -1,0 +1,8 @@
+[
+    {
+        "name" : "##PROJECT_NAME##-##PROJECT_VERSION##",
+        "target_path": "build/css/",
+        "target_ext": "css",
+        "target_origin": "src/css/easyselect.css" 
+    }
+]

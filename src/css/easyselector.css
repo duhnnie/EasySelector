@@ -1,0 +1,92 @@
+.easyselector, .easyselector ul {
+  border: 1px solid #cfcfcf;
+}
+
+.easyselector {
+  position: relative;
+  display: inline-block;
+  width: 'auto';
+  padding: 0px;
+  background-image: -webkit-gradient(linear, 50% 0%, 50% 100%, color-stop(0%, #f8f8f8), color-stop(100%, #dddddd));
+  background-image: -webkit-linear-gradient(top, #f8f8f8 0%, #dddddd 100%);
+  background-image: -moz-linear-gradient(top, #f8f8f8 0%, #dddddd 100%);
+  background-image: -o-linear-gradient(top, #f8f8f8 0%, #dddddd 100%);
+  background-image: linear-gradient(top, #f8f8f8 0%, #dddddd 100%);
+}
+
+.easyselector input, .easyselector-conf, .easyselector-arrow {
+  font-family: inherit;
+  font-size: inherit;
+  border: none;
+  padding: 0.3em;
+  display: inline-block;
+}
+
+.easyselector input{
+  margin: 0px;
+  background: none;
+  outline: none;
+  text-overflow: ellipsis;
+}
+
+.easyselector-arrow div {
+  background-image: url(https://d3oaxc4q5k2d6q.cloudfront.net/m/a649696e8dec/lib/chosen/chosen-sprite.png?25b9acb1b504);
+  background-position:  left top;
+  width: 9px;
+  display: inline-block;
+  padding: 0px;
+}
+
+.easyselector.expanded {
+  background: #fff;
+}
+
+.easyselector.expanded .easyselector-arrow div {
+  background-position: 34px 0px;
+}
+
+.easyselector ul {
+  left: -1px;
+  position: absolute;
+  display: none;
+  list-style: none;
+  padding: 0px;
+  margin: 0px;
+  background: #efefef;
+  overflow-y: auto;
+}
+
+.easyselector ul li {
+  display: list-item;
+}
+
+.easyselector ul li:hover {
+  background: #cfcfcf
+}
+
+.easyselector ul li.message {
+  font-weight: bold;
+  font-size: 0.8em;
+  padding: 0.2em;
+}
+
+.easyselector ul li a {
+  display: block;
+  padding: 0.3em;
+  padding-left: 1em;
+  text-decoration: none;
+  color: inherit;
+}
+
+.easyselector.expanded ul {
+  display: block;
+}
+
+.easyselector-conf {
+  background: #dfdfdf;
+  display: inline-block;
+}
+
+.easyselector-conf img {
+  width: 18px;
+}

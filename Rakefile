@@ -93,7 +93,7 @@ task :demo do
     File.open("build/index.html", 'w+') do |file|
         file.write html
     end
-    system 'cp src/demo/app.js build/app.js'
+    system 'cp src/demo/app.js build/js/app.js'
     system 'cp -r src/demo/lib build/.'
 end
 

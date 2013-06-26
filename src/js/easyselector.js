@@ -366,7 +366,10 @@ EasySelector.prototype.createHTML = function() {
 };
 
 EasySelector.prototype.getHTML = function() {
-    return this.createHTML();
+    if(!this.html) {
+        this.createHTML();
+    }
+    return this.html;
 };
 
 EasySelector.prototype.getValue = function() {

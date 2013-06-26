@@ -120,23 +120,40 @@ EasySelector.prototype.createHTMLOption = function(label, value) {
     return listItem;
 };
 
+EasySelector.prototype.addOption = function(label, value, selected) {
+    this.options.push({
+        label: label,
+        value: value
+    });
+
+    if(this.html) {
+        this.dom.list.appendChild(this.createHTMLOption(label, value));
+        if(selected) {
+            this.setSelectedItem(label, value);
+        }
+        this.listHtmlBackup = this.dom.list.cloneNode(true);
+    }
+
+    return this;
+};
+
 EasySelector.prototype.setOptions = function(options, useBackup) {
     var i;
 
     if(options.hasOwnProperty("length") && options.push) {
-        this.options = options;
-
         if(this.html) {
             $(this.dom.list).empty();
-            if(useBackup) {
+        }
+        if(useBackup) {
+            if(this.html) {
                 for(i = 0; i < this.listHtmlBackup.childNodes.length; i++) {
                     this.dom.list.appendChild(this.listHtmlBackup.childNodes[i].cloneNode(true));
                 }
-            } else {
-                for(i = 0; i < options.length; i++) {
-                    this.dom.list.appendChild(this.createHTMLOption(options[i].label, options[i].value));
-                }
-                this.listHtmlBackup = this.dom.list.cloneNode(true);
+            }
+        } else {
+            this.options = [];
+            for(i = 0; i < options.length; i++) {
+                this.addOption(options[i].label, options[i].value, options[i].selected);
             }
         }
     }

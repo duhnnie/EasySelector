@@ -7,6 +7,7 @@ var EasySelector = function(settings) {
     this.listHtmlBackup = null;
     this.listMaxHeight = null;
     this.existingValue = null;
+    this.settingOptions = [];
     this.options = [];
 
     EasySelector.prototype.init.call(this, settings);
@@ -18,6 +19,28 @@ EasySelector.prototype.init = function(settings) {
     this.options = settings.options;
     this.existingValue = false;
     this.listMaxHeight = 200;
+    this.settingOptions = settings.settingOptions;
+};
+
+EasySelector.prototype.setSettingOptions = function(settingOptions) {
+    var i, option, selected = false;
+    this.settingOptions = settingOptions;
+    if(this.html) {
+        $(this.dom.settingOptions).empty();
+        for(i = 0; i < settingOptions.length; i++) {
+            option = this.createHTMLOption(settingOptions[i].label, settingOptions[i].value);
+            if(settingOptions[i].selected) {
+                selected = true;
+                $(option).addClass("selected");
+            }
+            this.dom.settingsPanel.appendChild(option);
+        }
+        if(!selected && i) {
+            this.settingOptions[0].selected = true;
+            $(this.dom.settingsPanel.childNodes[0]).addClass('selected');
+        }
+    }
+    return this;
 };
 
 EasySelector.prototype.setListMaxHeight = function(height) {
@@ -88,6 +111,7 @@ EasySelector.prototype.processCurrentInput = function() {
 
 EasySelector.prototype.open = function() {
     if(this.html && !this.isOpen) {
+        $(this.dom.settingsPanel).hide();
         this.dom.list.style.width = $(this.html).width() + "px";
         $(this.html).addClass("expanded");
         this.isOpen = true;
@@ -159,7 +183,10 @@ EasySelector.prototype.attachListeners = function() {
     var that = this;
     $(this.html).on('click', 'a', function(e) {
         e.preventDefault();
-        if(this.parentElement && this.parentElement.tagName.toLowerCase() === 'li') {
+        if($(this).parents("." + that.dom.settingsPanel.className).length) {
+            $(that.dom.settingsPanel).find("li.selected").removeClass("selected").end().hide();
+            $(this.parentElement).addClass("selected");
+        } else if(this.parentElement && this.parentElement.tagName.toLowerCase() === 'li') {
             //is a list element
             that.setSelectedItem(this.textContent, $(this).data("value"));
             that.close();
@@ -176,6 +203,10 @@ EasySelector.prototype.attachListeners = function() {
                     break;
                 case 'easyselector-conf':
                     //is the configuration button
+                    $(that.dom.settingsPanel).toggle();
+                    if($('.easyselector-settings:visible').length) {
+                        that.close();
+                    }
                     break;
             }
         }
@@ -210,7 +241,7 @@ EasySelector.prototype.attachListeners = function() {
 };
 
 EasySelector.prototype.createHTML = function() {
-    var container, input, arrow, settings, list, aux;
+    var container, input, arrow, settings, list, aux, settingsPanel;
 
     if(this.html) {
         return html;
@@ -239,18 +270,24 @@ EasySelector.prototype.createHTML = function() {
 
     list = document.createElement('ul');
 
+    settingsPanel = document.createElement('ul');
+    settingsPanel.className = 'easyselector-settings';
+
     container.appendChild(input);
     container.appendChild(arrow);
     container.appendChild(settings);
     container.appendChild(list);
+    container.appendChild(settingsPanel);
 
     this.dom.input = input;
     this.dom.arrow = arrow;
     this.dom.settings = settings;
     this.dom.list = list;
+    this.dom.settingsPanel = settingsPanel;
 
     this.html = container;
 
+    this.setSettingOptions(this.settingOptions);
     this.setOptions(this.options);
     this.setListMaxHeight(this.listMaxHeight);
     this.attachListeners();

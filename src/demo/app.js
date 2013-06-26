@@ -23,6 +23,18 @@ function init() {
                 label: "abcdefghijk",
                 value: "opt 5"
             }
+        ],
+        settingOptions: [
+            {
+                label: "set",
+                value: "set"
+            }, {
+                label: "array",
+                value: "array"
+            }, {
+                label: "concat",
+                value: "concat"
+            }
         ]
     });
     $(document.body).prepend(easySelector.getHTML());

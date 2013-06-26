@@ -37,6 +37,19 @@
   padding: 0px;
 }
 
+.easyselector .easyselector-settings {
+  right: -1px;
+  position: absolute;
+  width: auto;
+  left: auto;
+}
+
+.easyselector .easyselector-settings li:hover,
+.easyselector .easyselector-settings li.selected {
+  background: #555;
+  color: #ddd;
+}
+
 .easyselector.expanded {
   background: #fff;
 }

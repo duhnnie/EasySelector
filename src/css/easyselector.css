@@ -26,14 +26,27 @@
 
 .easyselector-conf, 
 .easyselector-arrow {
-  float: right;
+  position: absolute;
+  top: 0px;
+}
+
+.easyselector-conf {
+  display: inline;
+  right: 0px;
+}
+
+.easyselector-arrow {
+  right: 28px;
+  background: inherit;
 }
 
 .easyselector input{
+  width: 70%;
   margin: 0px;
   background: none;
   outline: none;
   text-overflow: ellipsis;
+  padding-right: 0px; 
 }
 
 .easyselector a {

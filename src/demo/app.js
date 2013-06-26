@@ -36,7 +36,7 @@ function init() {
                 value: "concat"
             }
         ],
-        width: 360,
+        width: '100%',
         configurable: true
     });
     $('#cont').append(easySelector.getHTML());

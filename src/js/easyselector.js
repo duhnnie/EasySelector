@@ -55,7 +55,7 @@ EasySelector.prototype.setIsConfigurable = function(conf) {
 
 EasySelector.prototype.setWidth = function(width) {
     //Only accepts integer or percentage value
-    var theWidth, buttonsWidth, $input;
+    var theWidth, buttonsWidth, $input, dummy;
     if(typeof width === 'number') {
         this.width = width;
         theWidth = width + "px";
@@ -64,15 +64,25 @@ EasySelector.prototype.setWidth = function(width) {
     }
     if(this.html && theWidth) {
         $input = $(this.dom.input);
-        theWidth = $(this.html).css("width", theWidth).width();
-        buttonsWidth = $(this.dom.arrow).outerWidth() + (this.configurable ? $(this.dom.settings).outerWidth() : 0) + 1;
-        if(buttonsWidth === 1) {
-            theWidth = parseInt(this.width, 10) - (this.configurable ? 56 : 36);
-        } else {
+        $(this.html).css("width", theWidth);
+        if(!/^\d+(\.\d+)*%$/.test(theWidth)) {
+            theWidth = $(this.html).css("width", theWidth).width();
+            if(this.html.parentElement) {
+                buttonsWidth = $(this.dom.arrow).outerWidth() + (this.configurable ? $(this.dom.settings).outerWidth() : 0) + 1;
+            } else {
+                dummy = this.html.cloneNode(true);
+                dummy.style.display = 'none';
+                document.body.appendChild(dummy);
+                buttonsWidth = $(dummy).find('.easyselector-arrow').outerWidth() + (this.configurable ? $(dummy).find('.easyselector-conf').outerWidth() : 0) + 1;
+                theWidth = $(dummy).width();
+                $(dummy).remove();
+            }
             theWidth -= buttonsWidth;
             theWidth -= $input.outerWidth() - $input.width();
+            $input.css("width", Math.floor(theWidth) + "px");
+        } else {
+            $input.css("width", "");
         }
-        $input.css("width", Math.floor(theWidth) + "px");
     }
     return this;
 };

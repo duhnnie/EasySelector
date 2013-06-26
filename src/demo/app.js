@@ -35,9 +35,11 @@ function init() {
                 label: "concat",
                 value: "concat"
             }
-        ]
+        ],
+        width: 360,
+        configurable: true
     });
-    $(document.body).prepend(easySelector.getHTML());
+    $('#cont').append(easySelector.getHTML());
 }
 
 $(init);

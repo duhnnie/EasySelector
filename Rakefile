@@ -95,6 +95,7 @@ task :demo do
     end
     system 'cp src/demo/app.js build/js/app.js'
     system 'cp -r src/demo/lib build/.'
+    system 'cp -r src/img build/.'
 end
 
 desc "Build EasySelector"

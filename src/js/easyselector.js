@@ -4,22 +4,77 @@ var EasySelector = function(settings) {
     this.html = null;
     this.dom = null;
     this.isOpen = null;
+    this.isOpenSettings = null;
     this.listHtmlBackup = null;
     this.listMaxHeight = null;
     this.existingValue = null;
     this.settingOptions = [];
+    this.width = null;
     this.options = [];
+    this.configurable = null;
 
     EasySelector.prototype.init.call(this, settings);
 };
 
 EasySelector.prototype.init = function(settings) {
+    var defaults = {
+        options: [],
+        listMaxHeight: 200,
+        width: 240,
+        settingOptions: [],
+        configurable: true
+    };
+
     this.isOpen = false;
+    this.isOpenSettings = false;
     this.dom = {};
-    this.options = settings.options;
     this.existingValue = false;
-    this.listMaxHeight = 200;
-    this.settingOptions = settings.settingOptions;
+
+    $.extend(true, defaults, settings);
+
+    this.setOptions(defaults.options)
+        .setListMaxHeight(defaults.listMaxHeight)
+        .setWidth(defaults.width)
+        .setSettingOptions(defaults.settingOptions)
+        .setIsConfigurable(defaults.configurable);
+};
+
+EasySelector.prototype.setIsConfigurable = function(conf) {
+    this.configurable = !!conf;
+    if(this.html) {
+        if(!conf) {
+            this.closeSettings();
+            $(this.dom.settings).hide();   
+        } else {
+            $(this.dom.settings).show();
+        }
+        this.setWidth(this.width);
+    }
+    return this;
+};
+
+EasySelector.prototype.setWidth = function(width) {
+    //Only accepts integer or percentage value
+    var theWidth, buttonsWidth, $input;
+    if(typeof width === 'number') {
+        this.width = width;
+        theWidth = width + "px";
+    } else if(parseInt(width, 10)) {
+        theWidth = this.width = width;
+    }
+    if(this.html && theWidth) {
+        $input = $(this.dom.input);
+        theWidth = $(this.html).css("width", theWidth).width();
+        buttonsWidth = $(this.dom.arrow).outerWidth() + (this.configurable ? $(this.dom.settings).outerWidth() : 0) + 1;
+        if(buttonsWidth === 1) {
+            theWidth = parseInt(this.width, 10) - (this.configurable ? 56 : 36);
+        } else {
+            theWidth -= buttonsWidth;
+            theWidth -= $input.outerWidth() - $input.width();
+        }
+        $input.css("width", Math.floor(theWidth) + "px");
+    }
+    return this;
 };
 
 EasySelector.prototype.setSettingOptions = function(settingOptions) {
@@ -36,7 +91,6 @@ EasySelector.prototype.setSettingOptions = function(settingOptions) {
             this.dom.settingsPanel.appendChild(option);
         }
         if(!selected && i) {
-            this.settingOptions[0].selected = true;
             $(this.dom.settingsPanel.childNodes[0]).addClass('selected');
         }
     }
@@ -109,12 +163,29 @@ EasySelector.prototype.processCurrentInput = function() {
     return this;
 };
 
+EasySelector.prototype.openSettings = function() {
+    if(this.html && !this.isOpenSettings) {
+        $(this.dom.settingsPanel).show();
+        this.isOpenSettings = true;
+        this.close();
+    }
+    return this;
+};
+
 EasySelector.prototype.open = function() {
     if(this.html && !this.isOpen) {
-        $(this.dom.settingsPanel).hide();
+        this.closeSettings();
         this.dom.list.style.width = $(this.html).width() + "px";
         $(this.html).addClass("expanded");
         this.isOpen = true;
+    }
+    return this;
+};
+
+EasySelector.prototype.closeSettings = function() {
+    if(this.html && this.isOpenSettings) {
+        $(this.dom.settingsPanel).hide();
+        this.isOpenSettings = false;
     }
     return this;
 };
@@ -184,8 +255,9 @@ EasySelector.prototype.attachListeners = function() {
     $(this.html).on('click', 'a', function(e) {
         e.preventDefault();
         if($(this).parents("." + that.dom.settingsPanel.className).length) {
-            $(that.dom.settingsPanel).find("li.selected").removeClass("selected").end().hide();
+            $(that.dom.settingsPanel).find("li.selected").removeClass("selected");
             $(this.parentElement).addClass("selected");
+            that.closeSettings();
         } else if(this.parentElement && this.parentElement.tagName.toLowerCase() === 'li') {
             //is a list element
             that.setSelectedItem(this.textContent, $(this).data("value"));
@@ -203,9 +275,10 @@ EasySelector.prototype.attachListeners = function() {
                     break;
                 case 'easyselector-conf':
                     //is the configuration button
-                    $(that.dom.settingsPanel).toggle();
                     if($('.easyselector-settings:visible').length) {
-                        that.close();
+                        that.closeSettings();
+                    } else {
+                        that.openSettings();
                     }
                     break;
             }
@@ -224,18 +297,15 @@ EasySelector.prototype.attachListeners = function() {
             that.setOptions(that.options, true);
             that.open();
         }).on('change', function(){
-            /*console.log(that.isOpen ? 'abierto' : 'cerrado');
-            console.log(this.value);*/
-            //that.processCurrentInput();
             that.close(); 
         }).on('blur', function() {
-            //this.value = "";
             that.processCurrentInput();
         });
 
     $(document).on('click focusin', function(e) {
         if(!$(e.target).parents(that.html).length) {
             that.close();
+            that.closeSettings();
         }
     });
 };
@@ -263,19 +333,18 @@ EasySelector.prototype.createHTML = function() {
     settings = document.createElement("a");
     settings.className = 'easyselector-conf';
     settings.href = '#';
-    aux = document.createElement("img");
-    aux.align = 'absmiddle';
-    aux.src = 'http://cdn3.iconfinder.com/data/icons/token/Token,%20128x128,%20PNG/Gear.png';
+    aux = aux.cloneNode(true);
     settings.appendChild(aux);
 
     list = document.createElement('ul');
+    list.className = 'easyselector-list';
 
     settingsPanel = document.createElement('ul');
     settingsPanel.className = 'easyselector-settings';
 
     container.appendChild(input);
-    container.appendChild(arrow);
     container.appendChild(settings);
+    container.appendChild(arrow);
     container.appendChild(list);
     container.appendChild(settingsPanel);
 
@@ -290,6 +359,7 @@ EasySelector.prototype.createHTML = function() {
     this.setSettingOptions(this.settingOptions);
     this.setOptions(this.options);
     this.setListMaxHeight(this.listMaxHeight);
+    this.setIsConfigurable(this.configurable);
     this.attachListeners();
 
     return this.html;
@@ -297,4 +367,17 @@ EasySelector.prototype.createHTML = function() {
 
 EasySelector.prototype.getHTML = function() {
     return this.createHTML();
+};
+
+EasySelector.prototype.getValue = function() {
+    return this.value;
+};
+
+EasySelector.prototype.getLabel = function() {
+    return this.label;
+};
+
+EasySelector.prototype.getSettingValue = function() {
+    var setting = $(this.dom.settingsPanel).find("li.selected a").data("value");
+    return setting || null;
 };

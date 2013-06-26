@@ -1,4 +1,6 @@
-.easyselector, .easyselector ul {
+.easyselector, 
+.easyselector-list,
+.easyselector-settings {
   border: 1px solid #cfcfcf;
 }
 
@@ -49,7 +51,9 @@
   padding-right: 0px; 
 }
 
-.easyselector a {
+.easyselector a,
+.easyselector-settings a,
+.easyselector-list a {
   text-decoration: none;
   color: inherit;
 }
@@ -65,7 +69,7 @@
 .easyselector-settings {
   right: -1px;
   position: absolute;
-  width: auto;
+  width: 65px;
   left: auto;
 }
 
@@ -83,7 +87,8 @@
   background-position: 34px 0px;
 }
 
-.easyselector ul {
+.easyselector-list,
+.easyselector-settings {
   position: absolute;
   display: none;
   list-style: none;
@@ -95,13 +100,15 @@
 
 .easyselector-list {
   left: -1px;
+  position: absolute;
 } 
 
 .easyselector-list li {
   display: list-item;
 }
 
-.easyselector ul li:hover {
+.easyselector-list li:hover,
+.easyselector-settings li:hover {
   background: #cfcfcf
 }
 
@@ -111,7 +118,8 @@
   padding: 0.2em;
 }
 
-.easyselector ul li a {
+.easyselector-list li a,
+.easyselector-settings li a {
   display: block;
   padding: 0.3em;
   padding-left: 1em;

@@ -44,9 +44,11 @@ EasySelector.prototype.setIsConfigurable = function(conf) {
     if(this.html) {
         if(!conf) {
             this.closeSettings();
-            $(this.dom.settings).hide();   
+            $(this.dom.settings).hide();
+            $(this.dom.arrow).css("right", "0px");
         } else {
             $(this.dom.settings).show();
+            $(this.dom.arrow).css("right", "");
         }
         this.setWidth(this.width);
     }
@@ -191,8 +193,13 @@ EasySelector.prototype.processCurrentInput = function() {
 };
 
 EasySelector.prototype.openSettings = function() {
+    var pos, $html = $(this.html), $panel = $(this.dom.settingsPanel);
     if(this.html && !this.isOpenSettings) {
-        $(this.dom.settingsPanel).show();
+        pos = $html.offset();
+        $panel.css({
+            top: pos.top + $html.outerHeight(),
+            left: pos.left + $html.outerWidth() - $panel.outerWidth()
+        }).show();
         this.isOpenSettings = true;
         this.close();
     }
@@ -200,9 +207,15 @@ EasySelector.prototype.openSettings = function() {
 };
 
 EasySelector.prototype.open = function() {
+    var pos;
     if(this.html && !this.isOpen) {
         this.closeSettings();
         this.dom.list.style.width = $(this.html).width() + "px";
+        pos = $(this.html).offset();
+        $(this.dom.list).css({
+            top: pos.top + $(this.html).outerHeight(),
+            left: pos.left
+        }).show();
         $(this.html).addClass("expanded");
         this.isOpen = true;
     }
@@ -220,6 +233,7 @@ EasySelector.prototype.closeSettings = function() {
 EasySelector.prototype.close = function() {
     if(this.html && this.isOpen) {
         $(this.html).removeClass("expanded");
+        $(this.dom.list).hide();
         this.isOpen = false;
         if(!this.existingValue) {
             this.processCurrentInput();
@@ -281,35 +295,32 @@ EasySelector.prototype.attachListeners = function() {
     var that = this;
     $(this.html).on('click', 'a', function(e) {
         e.preventDefault();
-        if($(this).parents("." + that.dom.settingsPanel.className).length) {
-            $(that.dom.settingsPanel).find("li.selected").removeClass("selected");
-            $(this.parentElement).addClass("selected");
-            that.closeSettings();
-        } else if(this.parentElement && this.parentElement.tagName.toLowerCase() === 'li') {
-            //is a list element
-            that.setSelectedItem(this.textContent, $(this).data("value"));
-            that.close();
-        } else {
-            switch(this.className) {
-                case 'easyselector-arrow':
-                    //is the display/hide arrow button
-                    if(that.isOpen) {
-                        that.close();
-                    } else {
-                        that.setOptions(that.options, true);
-                        that.open();   
-                    }
-                    break;
-                case 'easyselector-conf':
-                    //is the configuration button
-                    if($('.easyselector-settings:visible').length) {
-                        that.closeSettings();
-                    } else {
-                        that.openSettings();
-                    }
-                    break;
-            }
+        switch(this.className) {
+            case 'easyselector-arrow':
+                //is the display/hide arrow button
+                if(that.isOpen) {
+                    that.close();
+                } else {
+                    that.setOptions(that.options, true);
+                    that.open();   
+                }
+                break;
+            case 'easyselector-conf':
+                //is the configuration button
+                if($('.easyselector-settings:visible').length) {
+                    that.closeSettings();
+                } else {
+                    that.openSettings();
+                }
+                break;
         }
+    });
+
+    $(this.dom.settingsPanel).on('click', 'a', function(e) {
+        e.preventDefault(); 
+        $(that.dom.settingsPanel).find("li.selected").removeClass("selected");
+        $(this.parentElement).addClass("selected");
+        that.closeSettings();
     });
 
     $(this.dom.input).on('keyup', that.searchSuggestionsHandler())
@@ -329,6 +340,12 @@ EasySelector.prototype.attachListeners = function() {
             that.processCurrentInput();
         });
 
+    $(this.dom.list).on('click', 'a', function(e) {
+        e.preventDefault();
+        that.setSelectedItem(this.textContent, $(this).data("value"));
+        that.close();
+    });
+
     $(document).on('click focusin', function(e) {
         if(!$(e.target).parents(that.html).length) {
             that.close();
@@ -341,7 +358,7 @@ EasySelector.prototype.createHTML = function() {
     var container, input, arrow, settings, list, aux, settingsPanel;
 
     if(this.html) {
-        return html;
+        return this.html;
     }
 
     container = document.createElement('div');
@@ -372,8 +389,8 @@ EasySelector.prototype.createHTML = function() {
     container.appendChild(input);
     container.appendChild(settings);
     container.appendChild(arrow);
-    container.appendChild(list);
-    container.appendChild(settingsPanel);
+    document.body.appendChild(settingsPanel);
+    document.body.appendChild(list);
 
     this.dom.input = input;
     this.dom.arrow = arrow;

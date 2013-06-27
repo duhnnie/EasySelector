@@ -1,4 +1,5 @@
 var EasySelector = function(settings) {
+    this.id = null;
     this.label = null;
     this.value = null;
     this.html = null;
@@ -26,7 +27,8 @@ EasySelector.prototype.init = function(settings) {
         settingOptions: [],
         configurable: true,
         settingValue: null,
-        onSettingValueChange: null
+        onSettingValueChange: null,
+        id: Math.floor(Math.random()*10000000000000000)
     };
 
     this.isOpen = false;
@@ -37,6 +39,7 @@ EasySelector.prototype.init = function(settings) {
     $.extend(true, defaults, settings);
 
     this.onSettingValueChange = defaults.onSettingValueChange;
+    this.id = defaults.id;
 
     this.setOptions(defaults.options)
         .setListMaxHeight(defaults.listMaxHeight)
@@ -327,6 +330,9 @@ EasySelector.prototype.attachListeners = function() {
         e.preventDefault(); 
         $(that.dom.settingsPanel).find("li.selected").removeClass("selected");
         $(this.parentElement).addClass("selected");
+        if(typeof that.onSettingValueChange === 'function') {
+            that.onSettingValueChange.call(that, that.getSettingValue());
+        }
         that.closeSettings();
     });
 
@@ -342,7 +348,7 @@ EasySelector.prototype.attachListeners = function() {
             that.setOptions(that.options, true);
             that.open();
         }).on('change', function(){
-            that.close(); 
+            //that.close(); 
         }).on('blur', function() {
             that.processCurrentInput();
         });
@@ -354,7 +360,7 @@ EasySelector.prototype.attachListeners = function() {
     });
 
     $(document).on('click focusin', function(e) {
-        if(!$(e.target).parents(that.html).length) {
+        if(!$(e.target).parents("#" + that.id).length) {
             that.close();
             that.closeSettings();
         }
@@ -405,6 +411,7 @@ EasySelector.prototype.createHTML = function() {
     this.dom.list = list;
     this.dom.settingsPanel = settingsPanel;
 
+    container.id = this.id;
     this.html = container;
 
     this.setSettingOptions(this.settingOptions);

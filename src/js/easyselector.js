@@ -12,6 +12,8 @@ var EasySelector = function(settings) {
     this.width = null;
     this.options = [];
     this.configurable = null;
+    this.settingValue = null;
+    this.onSettingValueChange = null;
 
     EasySelector.prototype.init.call(this, settings);
 };
@@ -22,7 +24,9 @@ EasySelector.prototype.init = function(settings) {
         listMaxHeight: 200,
         width: 240,
         settingOptions: [],
-        configurable: true
+        configurable: true,
+        settingValue: null,
+        onSettingValueChange: null
     };
 
     this.isOpen = false;
@@ -32,11 +36,14 @@ EasySelector.prototype.init = function(settings) {
 
     $.extend(true, defaults, settings);
 
+    this.onSettingValueChange = defaults.onSettingValueChange;
+
     this.setOptions(defaults.options)
         .setListMaxHeight(defaults.listMaxHeight)
         .setWidth(defaults.width)
         .setSettingOptions(defaults.settingOptions)
-        .setIsConfigurable(defaults.configurable);
+        .setIsConfigurable(defaults.configurable)
+        .setSettingValue(defaults.settingValue);
 };
 
 EasySelector.prototype.setIsConfigurable = function(conf) {
@@ -404,6 +411,7 @@ EasySelector.prototype.createHTML = function() {
     this.setOptions(this.options);
     this.setListMaxHeight(this.listMaxHeight);
     this.setIsConfigurable(this.configurable);
+    this.setSettingValue(this.settingValue);
     this.attachListeners();
 
     return this.html;
@@ -422,6 +430,27 @@ EasySelector.prototype.getValue = function() {
 
 EasySelector.prototype.getLabel = function() {
     return this.label;
+};
+
+EasySelector.prototype.setSettingValue = function(value) {
+    var $panel = $(this.dom.settingsPanel), 
+        prev = $panel.find("li.selected"),
+        cur = $panel.find("a[data-value="+value+"]"), i, exists = false;
+
+    for(i = 0; i < this.settingOptions.length; i++) {
+        if(this.settingOptions[i].value === value) {
+            this.settingValue = value;
+            exists = true;
+            break;
+        }
+    }
+
+    if(cur.length && exists) {
+        cur.parent().addClass("selected");
+        prev.removeClass("selected");
+    }
+
+    return this;
 };
 
 EasySelector.prototype.getSettingValue = function() {

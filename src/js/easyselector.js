@@ -397,6 +397,19 @@ EasySelector.prototype.getLabel = function() {
     return this.label;
 };
 
+EasySelector.prototype.setSettingValue = function(value) {
+    var $panel = $(this.dom.settingsPanel), 
+        prev = $panel.find("li.selected"),
+        cur = $panel.find("a[data-value="+value+"]");
+
+    if(cur.length) {
+        cur.parent().addClass("selected");
+        prev.removeClass("selected");
+    }
+
+    return this;
+};
+
 EasySelector.prototype.getSettingValue = function() {
     var setting = $(this.dom.settingsPanel).find("li.selected a").data("value");
     return setting || null;

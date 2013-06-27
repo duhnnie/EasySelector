@@ -5,6 +5,7 @@
 }
 
 .easyselector {
+  text-align: left;
   position: relative;
   display: inline-block;
   width: 'auto';

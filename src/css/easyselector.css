@@ -31,6 +31,14 @@
 .easyselector-arrow {
   position: absolute;
   top: 0px;
+  padding-bottom: 0px;
+  padding-top: 0px;
+  height: 1.7em;
+}
+
+.easyselector-conf div, 
+.easyselector-arrow div {
+  height: inherit;
 }
 
 .easyselector-conf {
@@ -43,7 +51,7 @@
   background: inherit;
 }
 
-.easyselector input{
+.easyselector input[type="text"]{
   width: 70%;
   margin: 0px;
   background: none;
@@ -70,7 +78,7 @@
 .easyselector-settings {
   right: -1px;
   position: absolute;
-  width: 65px;
+  width: 5em;
   left: auto;
 }
 

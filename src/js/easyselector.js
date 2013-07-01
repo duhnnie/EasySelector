@@ -12,6 +12,7 @@ var EasySelector = function(settings) {
     this.settingOptions = [];
     this.width = null;
     this.options = [];
+    this.onChange = null;
     this.configurable = null;
     this.settingValue = null;
     this.onSettingValueChange = null;
@@ -28,6 +29,7 @@ EasySelector.prototype.init = function(settings) {
         configurable: true,
         settingValue: null,
         onSettingValueChange: null,
+        onChange: null,
         id: Math.floor(Math.random()*10000000000000000)
     };
 
@@ -39,6 +41,7 @@ EasySelector.prototype.init = function(settings) {
     $.extend(true, defaults, settings);
 
     this.onSettingValueChange = defaults.onSettingValueChange;
+    this.onChange = defaults.onChange;
     this.id = defaults.id;
 
     this.setOptions(defaults.options)
@@ -189,7 +192,7 @@ EasySelector.prototype.processCurrentInput = function() {
         input = $.trim(this.dom.input.value).toLowerCase();
         if(input) {
             for(i = 0; i < this.options.length; i++) {
-                if(this.options[i].label === input) {
+                if(this.options[i].label.toLowerCase() === input || this.options[i].value.toLowerCase() === input) {
                     this.setSelectedItem(this.options[i].label, this.options[i].value);
                     return this;
                 }
@@ -253,6 +256,7 @@ EasySelector.prototype.close = function() {
 };
 
 EasySelector.prototype.setSelectedItem = function(label, value) {
+    var prevValue = this.value;
     this.label = label;
     this.value = value;
 
@@ -260,6 +264,9 @@ EasySelector.prototype.setSelectedItem = function(label, value) {
         this.dom.input.value = label;
     }
     this.existingValue = true;
+    if(typeof this.onChange === 'function') {
+        this.onChange.call(this, value, prevValue);
+    }
 
     return this;
 };
@@ -360,7 +367,7 @@ EasySelector.prototype.attachListeners = function() {
     });
 
     $(document).on('click focusin', function(e) {
-        if(!$(e.target).parents("#" + that.id).length) {
+        if(!($(e.target).parents("#" + that.id).length || $(e.target).parents("#" + that.id + "-list").length || $(e.target).parents("#" + that.id + "-settings").length)) {
             that.close();
             that.closeSettings();
         }
@@ -395,9 +402,11 @@ EasySelector.prototype.createHTML = function() {
 
     list = document.createElement('ul');
     list.className = 'easyselector-list';
+    list.id = this.id + "-list";
 
     settingsPanel = document.createElement('ul');
     settingsPanel.className = 'easyselector-settings';
+    settingsPanel.id = this.id + "-settings";
 
     container.appendChild(input);
     container.appendChild(settings);

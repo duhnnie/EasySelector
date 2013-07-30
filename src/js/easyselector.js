@@ -16,6 +16,7 @@ var EasySelector = function(settings) {
     this.configurable = null;
     this.settingValue = null;
     this.onSettingValueChange = null;
+    this.htmlCreationProcessFinished = null;
 
     EasySelector.prototype.init.call(this, settings);
 };
@@ -43,6 +44,7 @@ EasySelector.prototype.init = function(settings) {
     this.onSettingValueChange = defaults.onSettingValueChange;
     this.onChange = defaults.onChange;
     this.id = defaults.id;
+    this.htmlCreationProcessFinished = false;
 
     this.setOptions(defaults.options)
         .setListMaxHeight(defaults.listMaxHeight)
@@ -170,7 +172,7 @@ EasySelector.prototype.setOptions = function(options, useBackup) {
             $(this.dom.list).empty();
         }
         if(useBackup) {
-            if(this.html) {
+            if(this.html && this.listHtmlBackup) {
                 for(i = 0; i < this.listHtmlBackup.childNodes.length; i++) {
                     this.dom.list.appendChild(this.listHtmlBackup.childNodes[i].cloneNode(true));
                 }
@@ -264,7 +266,7 @@ EasySelector.prototype.setSelectedItem = function(label, value) {
         this.dom.input.value = label;
     }
     this.existingValue = true;
-    if(typeof this.onChange === 'function') {
+    if(typeof this.onChange === 'function' && value !== prevValue && this.htmlCreationProcessFinished) {
         this.onChange.call(this, value, prevValue);
     }
 
@@ -430,6 +432,8 @@ EasySelector.prototype.createHTML = function() {
     this.setSettingValue(this.settingValue);
     this.setSelectedItem(this.label, this.value);
     this.attachListeners();
+
+    this.htmlCreationProcessFinished = true;
 
     return this.html;
 };

@@ -253,6 +253,7 @@ EasySelector.prototype.close = function() {
         if(!this.existingValue) {
             this.processCurrentInput();
         }
+        $(this.html).focus();
     }
     return this;
 };
@@ -305,6 +306,7 @@ EasySelector.prototype.attachListeners = function() {
     var that = this;
     $(this.html).on('click', 'a', function(e) {
         e.preventDefault();
+        e.stopPropagation();
         switch(this.className) {
             case 'easyselector-arrow':
                 //is the display/hide arrow button
@@ -325,6 +327,10 @@ EasySelector.prototype.attachListeners = function() {
                 }
                 break;
         }
+    }).on('keydown', function(e) {
+        if(e.target !== that.dom.settings && e.target !== that.dom.arrow) {
+            $(that.dom.input).focus();
+        }
     });
 
     $(this.dom.settingsPanel).on('click', 'a', function(e) {
@@ -342,6 +348,7 @@ EasySelector.prototype.attachListeners = function() {
             that.showSuggestions($.trim(this.value));
         }
     }).on('keydown', function(e) {
+        e.stopPropagation();
         if(e.keyCode === 27) {
             that.setSelectedItem("", "");
             that.close();
@@ -389,6 +396,7 @@ EasySelector.prototype.createHTML = function() {
 
     container = document.createElement('div');
     container.className = 'easyselector';
+    container.tabIndex = 0;
 
     input = document.createElement('input');
     input.type = 'text';

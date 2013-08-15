@@ -362,14 +362,14 @@ EasySelector.prototype.attachListeners = function() {
         that.close();
     }).on('keydown', function(e) {
         if(e.keyCode === 38) {
+            e.preventDefault();
             $(e.target.parentElement).prev("li").find("a").focus();
         } else if(e.keyCode === 40) {  
+            e.preventDefault();
             $(e.target.parentElement).next("li").find("a").focus();
         } else if(e.keyCode === 27) {
             that.close();
         }
-    }).on('focus', 'a', function() {
-        console.log(this);
     });
 
     $(document).on('click focusin', function(e) {

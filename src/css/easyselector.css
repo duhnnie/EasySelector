@@ -117,7 +117,8 @@
 }
 
 .easyselector-list li:hover,
-.easyselector-settings li:hover {
+.easyselector-settings li:hover,
+.easyselector-list li a:focus {
   background: #cfcfcf
 }
 

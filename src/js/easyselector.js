@@ -301,15 +301,6 @@ EasySelector.prototype.showSuggestions = function(text) {
     return this;
 };
 
-EasySelector.prototype.searchSuggestionsHandler = function() {
-    var that = this;
-    return function(e) {
-        if(e.keyCode !== 27) {
-            that.showSuggestions($.trim(this.value));
-        }
-    };
-};
-
 EasySelector.prototype.attachListeners = function() {
     var that = this;
     $(this.html).on('click', 'a', function(e) {
@@ -345,27 +336,39 @@ EasySelector.prototype.attachListeners = function() {
         that.closeSettings();
     });
 
-    $(this.dom.input).on('keyup', that.searchSuggestionsHandler())
-        .on('keydown', function(e) {
-            if(e.keyCode === 27) {
-                that.setSelectedItem("", "");
-                that.close();
-            } else if(e.keyCode === 13) {
-                $(this).trigger("blur");
-            }
-        }).on('focus', function() {
-            that.setOptions(that.options, true);
-            that.open();
-        }).on('change', function(){
-            //that.close(); 
-        }).on('blur', function() {
+    $(this.dom.input).on('keyup', function(e) {
+        if(e.keyCode !== 13 && e.keyCode !== 27) {
+            that.showSuggestions($.trim(this.value));
+        }
+    }).on('keydown', function(e) {
+        if(e.keyCode === 27) {
+            that.setSelectedItem("", "");
+            that.close();
+        } else if(e.keyCode === 13) {
             that.processCurrentInput();
-        });
+            that.close();
+        } else if(e.keyCode === 40) {
+            $(that.dom.list).find("a").eq(0).focus();
+        }
+    }).on('focus', function() {
+        that.setOptions(that.options, true);
+        that.open();
+    });
 
     $(this.dom.list).on('click', 'a', function(e) {
         e.preventDefault();
         that.setSelectedItem(this.textContent, $(this).data("value"));
         that.close();
+    }).on('keydown', function(e) {
+        if(e.keyCode === 38) {
+            $(e.target.parentElement).prev("li").find("a").focus();
+        } else if(e.keyCode === 40) {  
+            $(e.target.parentElement).next("li").find("a").focus();
+        } else if(e.keyCode === 27) {
+            that.close();
+        }
+    }).on('focus', 'a', function() {
+        console.log(this);
     });
 
     $(document).on('click focusin', function(e) {

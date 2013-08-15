@@ -312,7 +312,8 @@ EasySelector.prototype.attachListeners = function() {
                     that.close();
                 } else {
                     that.setOptions(that.options, true);
-                    that.open();   
+                    that.open(); 
+                    $(that.dom.list).find("a").eq(0).focus();  
                 }
                 break;
             case 'easyselector-conf':

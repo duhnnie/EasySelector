@@ -322,6 +322,8 @@ EasySelector.prototype.listArrowKeysHandler = function() {
         } else if(e.keyCode === 27) {
             that.closeSettings();
             $(that.getHTML()).focus();
+        } else if(e.keyCode === 9 && e.target === $(this).find('a:last').get(0)) {
+            e.preventDefault();
         }
     };
 };
@@ -367,6 +369,7 @@ EasySelector.prototype.attachListeners = function() {
             that.onSettingValueChange.call(that, that.getSettingValue());
         }
         that.closeSettings();
+        $(that.getHTML()).focus();
     });
 
     $(this.dom.input).on('keyup', function(e) {
@@ -387,8 +390,6 @@ EasySelector.prototype.attachListeners = function() {
     }).on('focus', function() {
         that.setOptions(that.options, true);
         that.open();
-    }).on('blur', function() {
-        that.close();
     });
 
     $(this.dom.list).on('click', 'a', function(e) {
@@ -399,8 +400,8 @@ EasySelector.prototype.attachListeners = function() {
 
     $(document).on('click focusin', function(e) {
         if(!($(e.target).parents("#" + that.id).length || $(e.target).parents("#" + that.id + "-list").length || $(e.target).parents("#" + that.id + "-settings").length)) {
-            that.closeAndFocus();
             that.closeSettings();
+            that.close();
         }
     });
 };

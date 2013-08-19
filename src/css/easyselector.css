@@ -105,6 +105,7 @@
   margin: 0px;
   background: #efefef;
   overflow-y: auto;
+  -webkit-box-shadow: 0.2em 0.2em 0.5em rgba(0, 0, 0, 0.5)
 }
 
 .easyselector-list {

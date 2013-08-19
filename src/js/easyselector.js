@@ -216,6 +216,7 @@ EasySelector.prototype.openSettings = function() {
             left: pos.left + $html.outerWidth() - $panel.outerWidth()
         }).show();
         this.isOpenSettings = true;
+        $panel.find('a').eq(0).focus();
         this.close();
     }
     return this;
@@ -253,7 +254,13 @@ EasySelector.prototype.close = function() {
         if(!this.existingValue) {
             this.processCurrentInput();
         }
-        $(this.html).focus();
+    }
+    return this;
+};
+
+EasySelector.prototype.closeAndFocus = function() {
+    if(this.html && this.isOpen) {
+        $(this.close().getHTML()).focus();
     }
     return this;
 };
@@ -302,36 +309,55 @@ EasySelector.prototype.showSuggestions = function(text) {
     return this;
 };
 
+EasySelector.prototype.listArrowKeysHandler = function() {
+    var that = this;
+    return function(e) {
+        e.stopPropagation();
+        if(e.keyCode === 38) {
+            e.preventDefault();
+            $(e.target.parentElement).prev("li").find("a").focus();
+        } else if(e.keyCode === 40) {  
+            e.preventDefault();
+            $(e.target.parentElement).next("li").find("a").focus();
+        } else if(e.keyCode === 27) {
+            that.closeSettings();
+            $(that.getHTML()).focus();
+        }
+    };
+};
+
 EasySelector.prototype.attachListeners = function() {
     var that = this;
-    $(this.html).on('click', 'a', function(e) {
-        e.preventDefault();
-        e.stopPropagation();
-        switch(this.className) {
-            case 'easyselector-arrow':
-                //is the display/hide arrow button
-                if(that.isOpen) {
-                    that.close();
-                } else {
-                    that.setOptions(that.options, true);
-                    that.open(); 
-                    $(that.dom.list).find("a").eq(0).focus();  
-                }
-                break;
-            case 'easyselector-conf':
-                //is the configuration button
-                if($('.easyselector-settings:visible').length) {
-                    that.closeSettings();
-                } else {
-                    that.openSettings();
-                }
-                break;
-        }
-    }).on('keydown', function(e) {
-        if(e.target !== that.dom.settings && e.target !== that.dom.arrow) {
-            $(that.dom.input).focus();
+    $(this.html).on('keydown', function(e) {
+        if(e.keyCode === 13) {
+            $(that.dom.input).trigger('focus');
         }
     });
+    $(this.dom.arrow).on('click', function(e) {
+        e.preventDefault();
+        e.stopPropagation();
+        if(that.isOpen) {
+            that.closeAndFocus();
+        } else {
+            that.setOptions(that.options, true);
+            that.open(); 
+            $(that.dom.list).find("a").eq(0).focus();  
+        }   
+    }).on('keydown', function(e) {
+        e.stopPropagation();
+    });
+    $(this.dom.settings).on('click', function(e){
+        e.preventDefault();
+        e.stopPropagation();
+        if($('.easyselector-settings:visible').length) {
+            that.closeSettings();
+        } else {
+            that.openSettings();
+        }
+    }).on('keydown', function(e) {
+        e.stopPropagation();
+    });
+    $(this.dom.settingsPanel).on('keydown', this.listArrowKeysHandler());
 
     $(this.dom.settingsPanel).on('click', 'a', function(e) {
         e.preventDefault(); 
@@ -351,37 +377,29 @@ EasySelector.prototype.attachListeners = function() {
         e.stopPropagation();
         if(e.keyCode === 27) {
             that.setSelectedItem(that.label, that.getValue());
-            that.close();
+            that.closeAndFocus();
         } else if(e.keyCode === 13) {
             that.processCurrentInput();
-            that.close();
+            that.closeAndFocus();
         } else if(e.keyCode === 40) {
             $(that.dom.list).find("a").eq(0).focus();
         }
     }).on('focus', function() {
         that.setOptions(that.options, true);
         that.open();
+    }).on('blur', function() {
+        that.close();
     });
 
     $(this.dom.list).on('click', 'a', function(e) {
         e.preventDefault();
         that.setSelectedItem(this.textContent, $(this).data("value"));
-        that.close();
-    }).on('keydown', function(e) {
-        if(e.keyCode === 38) {
-            e.preventDefault();
-            $(e.target.parentElement).prev("li").find("a").focus();
-        } else if(e.keyCode === 40) {  
-            e.preventDefault();
-            $(e.target.parentElement).next("li").find("a").focus();
-        } else if(e.keyCode === 27) {
-            that.close();
-        }
-    });
+        that.closeAndFocus();
+    }).on('keydown', this.listArrowKeysHandler());
 
     $(document).on('click focusin', function(e) {
         if(!($(e.target).parents("#" + that.id).length || $(e.target).parents("#" + that.id + "-list").length || $(e.target).parents("#" + that.id + "-settings").length)) {
-            that.close();
+            that.closeAndFocus();
             that.closeSettings();
         }
     });

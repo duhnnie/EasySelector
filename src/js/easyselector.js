@@ -350,7 +350,7 @@ EasySelector.prototype.attachListeners = function() {
     }).on('keydown', function(e) {
         e.stopPropagation();
         if(e.keyCode === 27) {
-            that.setSelectedItem("", "");
+            that.setSelectedItem(that.label, that.getValue());
             that.close();
         } else if(e.keyCode === 13) {
             that.processCurrentInput();

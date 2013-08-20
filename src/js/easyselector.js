@@ -1,3 +1,4 @@
+/*global $ */
 var EasySelector = function(settings) {
     this.id = null;
     this.label = null;
@@ -109,7 +110,7 @@ EasySelector.prototype.setSettingOptions = function(settingOptions) {
     this.settingOptions = settingOptions;
     if(this.html) {
         $(this.dom.settingOptions).empty();
-        for(i = 0; i < settingOptions.length; i++) {
+        for(i = 0; i < settingOptions.length; i+=1) {
             option = this.createHTMLOption(settingOptions[i].label, settingOptions[i].value);
             if(settingOptions[i].selected) {
                 selected = true;
@@ -173,13 +174,13 @@ EasySelector.prototype.setOptions = function(options, useBackup) {
         }
         if(useBackup) {
             if(this.html && this.listHtmlBackup) {
-                for(i = 0; i < this.listHtmlBackup.childNodes.length; i++) {
+                for(i = 0; i < this.listHtmlBackup.childNodes.length; i+=1) {
                     this.dom.list.appendChild(this.listHtmlBackup.childNodes[i].cloneNode(true));
                 }
             }
         } else {
             this.options = [];
-            for(i = 0; i < options.length; i++) {
+            for(i = 0; i < options.length; i+=1) {
                 this.addOption(options[i].label, options[i].value, options[i].selected);
             }
         }
@@ -193,7 +194,7 @@ EasySelector.prototype.processCurrentInput = function() {
     if(this.html) {
         input = $.trim(this.dom.input.value).toLowerCase();
         if(input) {
-            for(i = 0; i < this.options.length; i++) {
+            for(i = 0; i < this.options.length; i+=1) {
                 if(this.options[i].label.toLowerCase() === input || this.options[i].value.toLowerCase() === input) {
                     this.setSelectedItem(this.options[i].label, this.options[i].value);
                     return this;
@@ -275,7 +276,7 @@ EasySelector.prototype.setSelectedItem = function(label, value) {
     }
     this.existingValue = true;
     if(typeof this.onChange === 'function' && value !== prevValue && this.htmlCreationProcessFinished) {
-        this.onChange.call(this, value, prevValue);
+        this.onChange(value, prevValue);
     }
 
     return this;
@@ -289,7 +290,7 @@ EasySelector.prototype.showSuggestions = function(text) {
             text = text.toLowerCase();
             textLength = text.length;
             $(this.dom.list).empty();
-            for(i = 0; i < this.options.length; i++) {
+            for(i = 0; i < this.options.length; i+=1) {
                 if(this.options[i].label.substr(0, textLength).toLowerCase() === text || this.options[i].value.substr(0, textLength).toLowerCase() === text) {
                     this.dom.list.appendChild(this.createHTMLOption(this.options[i].label, this.options[i].value));
                     showing += 1;
@@ -366,7 +367,7 @@ EasySelector.prototype.attachListeners = function() {
         $(that.dom.settingsPanel).find("li.selected").removeClass("selected");
         $(this.parentElement).addClass("selected");
         if(typeof that.onSettingValueChange === 'function') {
-            that.onSettingValueChange.call(that, that.getSettingValue());
+            that.onSettingValueChange(that.getSettingValue());
         }
         that.closeSettings();
         $(that.getHTML()).focus();
@@ -489,7 +490,7 @@ EasySelector.prototype.setSettingValue = function(value) {
         prev = $panel.find("li.selected"),
         cur = $panel.find("a[data-value="+value+"]"), i, exists = false;
 
-    for(i = 0; i < this.settingOptions.length; i++) {
+    for(i = 0; i < this.settingOptions.length; i+=1) {
         if(this.settingOptions[i].value === value) {
             this.settingValue = value;
             exists = true;

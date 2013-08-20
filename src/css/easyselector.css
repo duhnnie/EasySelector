@@ -83,7 +83,8 @@
 }
 
 .easyselector-settings li.selected, 
-.easyselector-settings li.selected:hover {
+.easyselector-settings li.selected:hover,
+.easyselector-settings a:active {
   background: #555;
   color: #ddd;
 }

@@ -52,7 +52,7 @@ EasySelector.prototype.init = function(settings) {
         .setWidth(defaults.width)
         .setSettingOptions(defaults.settingOptions)
         .setIsConfigurable(defaults.configurable)
-        .setSettingValue(defaults.settingValue);
+        .setSettingValue(defaults.settingValue || "[first]");
 };
 
 EasySelector.prototype.setIsConfigurable = function(conf) {

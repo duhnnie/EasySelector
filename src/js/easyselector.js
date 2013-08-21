@@ -488,19 +488,33 @@ EasySelector.prototype.getLabel = function() {
 EasySelector.prototype.setSettingValue = function(value) {
     var $panel = $(this.dom.settingsPanel), 
         prev = $panel.find("li.selected"),
-        cur = $panel.find("a[data-value="+value+"]"), i, exists = false;
+        cur, i, exists = true;
 
-    for(i = 0; i < this.settingOptions.length; i+=1) {
-        if(this.settingOptions[i].value === value) {
-            this.settingValue = value;
-            exists = true;
-            break;
+    if(!this.settingOptions.length) {
+        return this;
+    }
+
+    if(value === '[first]') {
+        cur = $panel.find('li').eq(0).find('a');
+        this.settingValue = this.settingOptions[0].value;
+    } else if(value === '[last]'){
+        cur = $panel.find('li:last').find('a');
+        this.settingValue = this.settingOptions[this.settingOptions.length - 1].value;
+    } else {
+        exists = false;
+        cur = $panel.find("a[data-value="+value+"]");
+        for(i = 0; i < this.settingOptions.length; i+=1) {
+            if(this.settingOptions[i].value === value) {
+                this.settingValue = value;
+                exists = true;
+                break;
+            }
         }
     }
 
     if(cur.length && exists) {
-        cur.parent().addClass("selected");
         prev.removeClass("selected");
+        cur.parent().addClass("selected");
     }
 
     return this;

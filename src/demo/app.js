@@ -36,7 +36,7 @@ function init() {
                 value: "concat"
             }
         ],
-        settingValue: 'array',
+        settingValue: '[last]',
         width: '100%',
         configurable: true
     });

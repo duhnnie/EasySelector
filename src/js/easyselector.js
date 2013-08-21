@@ -18,6 +18,7 @@ var EasySelector = function(settings) {
     this.settingValue = null;
     this.onSettingValueChange = null;
     this.htmlCreationProcessFinished = null;
+    this.language = null;
 
     EasySelector.prototype.init.call(this, settings);
 };
@@ -32,13 +33,17 @@ EasySelector.prototype.init = function(settings) {
         settingValue: null,
         onSettingValueChange: null,
         onChange: null,
-        id: Math.floor(Math.random()*10000000000000000)
+        id: Math.floor(Math.random()*10000000000000000),
+        language: {
+            NO_SIMILAR_OPTIONS: "No similar options"
+        }
     };
 
     this.isOpen = false;
     this.isOpenSettings = false;
     this.dom = {};
     this.existingValue = false;
+    this.language = defaults.language;
 
     $.extend(true, defaults, settings);
 
@@ -299,7 +304,7 @@ EasySelector.prototype.showSuggestions = function(text) {
             if(!showing) {
                 msg = document.createElement('li');
                 msg.className = 'message';
-                msg.appendChild(document.createTextNode("No similar options"));
+                msg.appendChild(document.createTextNode(this.language.NO_SIMILAR_OPTIONS));
                 this.dom.list.appendChild(msg);
             }
         } else {

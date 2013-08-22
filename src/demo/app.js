@@ -38,7 +38,19 @@ function init() {
         ],
         settingValue: 'nose',
         width: '100%',
-        configurable: true
+        configurable: true,
+        onSettingsPanelOpen: function() {
+            console.log(this, "open settings");
+        },
+        onSettingsPanelClose: function() {
+            console.log(this, "close settings");
+        },
+        onOptionsPanelOpen: function() {
+            console.log(this, "open options");
+        },
+        onOptionsPanelClose: function() {
+            console.log(this, "close options");
+        }
     });
     $('#cont').append(easySelector.getHTML());
 }

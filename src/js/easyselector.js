@@ -13,10 +13,14 @@ var EasySelector = function(settings) {
     this.settingOptions = [];
     this.width = null;
     this.options = [];
-    this.onChange = null;
     this.configurable = null;
     this.settingValue = null;
+    this.onChange = null;
     this.onSettingValueChange = null;
+    this.onSettingsPanelOpen = null;
+    this.onSettingsPanelClose = null;
+    this.onOptionsPanelOpen = null;
+    this.onOptionsPanelClose = null;
     this.htmlCreationProcessFinished = null;
     this.language = null;
 
@@ -33,6 +37,10 @@ EasySelector.prototype.init = function(settings) {
         settingValue: null,
         onSettingValueChange: null,
         onChange: null,
+        onSettingsPanelOpen: null,
+        onSettingsPanelClose: null,
+        onOptionsPanelOpen: null,
+        onOptionsPanelClose: null,
         id: Math.floor(Math.random()*10000000000000000),
         language: {
             NO_SIMILAR_OPTIONS: "No similar options"
@@ -48,6 +56,10 @@ EasySelector.prototype.init = function(settings) {
     $.extend(true, defaults, settings);
 
     this.onSettingValueChange = defaults.onSettingValueChange;
+    this.onSettingsPanelOpen = defaults.onSettingsPanelOpen;
+    this.onSettingsPanelClose = defaults.onSettingsPanelClose;
+    this.onOptionsPanelOpen = defaults.onOptionsPanelOpen;
+    this.onOptionsPanelClose = defaults.onOptionsPanelClose;
     this.onChange = defaults.onChange;
     this.id = defaults.id;
     this.htmlCreationProcessFinished = false;
@@ -224,6 +236,9 @@ EasySelector.prototype.openSettings = function() {
         this.isOpenSettings = true;
         $panel.find('a').eq(0).focus();
         this.close();
+        if(typeof this.onSettingsPanelOpen === 'function') {
+            this.onSettingsPanelOpen();
+        }
     }
     return this;
 };
@@ -240,6 +255,9 @@ EasySelector.prototype.open = function() {
         }).show();
         $(this.html).addClass("expanded");
         this.isOpen = true;
+        if(typeof this.onOptionsPanelOpen === 'function') {
+            this.onOptionsPanelOpen();
+        }
     }
     return this;
 };
@@ -248,6 +266,9 @@ EasySelector.prototype.closeSettings = function() {
     if(this.html && this.isOpenSettings) {
         $(this.dom.settingsPanel).hide();
         this.isOpenSettings = false;
+        if(typeof this.onSettingsPanelClose === 'function') {
+            this.onSettingsPanelClose();
+        }
     }
     return this;
 };
@@ -259,6 +280,9 @@ EasySelector.prototype.close = function() {
         this.isOpen = false;
         if(!this.existingValue) {
             this.processCurrentInput();
+        }
+        if(typeof this.onOptionsPanelClose === 'function') {
+            this.onOptionsPanelClose();
         }
     }
     return this;
@@ -368,12 +392,13 @@ EasySelector.prototype.attachListeners = function() {
     $(this.dom.settingsPanel).on('keydown', this.listArrowKeysHandler());
 
     $(this.dom.settingsPanel).on('click', 'a', function(e) {
+        var prev = that.settingValue;
         e.preventDefault();
         that.settingValue = $(this).data("value");
         $(that.dom.settingsPanel).find("li.selected").removeClass("selected");
         $(this.parentElement).addClass("selected");
-        if(typeof that.onSettingValueChange === 'function') {
-            that.onSettingValueChange(that.getSettingValue());
+        if(typeof that.onSettingValueChange === 'function' && prev !== that.settingValue) {
+            that.onSettingValueChange(that.getSettingValue(), prev);
         }
         that.closeSettings();
         $(that.getHTML()).focus();
@@ -405,7 +430,7 @@ EasySelector.prototype.attachListeners = function() {
         that.closeAndFocus();
     }).on('keydown', this.listArrowKeysHandler());
 
-    $(document).on('click focusin', function(e) {
+    $(document).on('click focusin scroll', function(e) {
         if(!($(e.target).parents("#" + that.id).length || $(e.target).parents("#" + that.id + "-list").length || $(e.target).parents("#" + that.id + "-settings").length)) {
             that.closeSettings();
             that.close();

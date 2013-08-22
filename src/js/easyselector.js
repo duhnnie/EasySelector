@@ -368,7 +368,8 @@ EasySelector.prototype.attachListeners = function() {
     $(this.dom.settingsPanel).on('keydown', this.listArrowKeysHandler());
 
     $(this.dom.settingsPanel).on('click', 'a', function(e) {
-        e.preventDefault(); 
+        e.preventDefault();
+        that.settingValue = $(this).data("value");
         $(that.dom.settingsPanel).find("li.selected").removeClass("selected");
         $(this.parentElement).addClass("selected");
         if(typeof that.onSettingValueChange === 'function') {

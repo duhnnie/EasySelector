@@ -493,7 +493,7 @@ EasySelector.prototype.getLabel = function() {
 EasySelector.prototype.setSettingValue = function(value) {
     var $panel = $(this.dom.settingsPanel), 
         prev = $panel.find("li.selected"),
-        cur, i, exists = true;
+        cur;
 
     if(!this.settingOptions.length) {
         return this;
@@ -506,26 +506,16 @@ EasySelector.prototype.setSettingValue = function(value) {
         cur = $panel.find('li:last').find('a');
         this.settingValue = this.settingOptions[this.settingOptions.length - 1].value;
     } else {
-        exists = false;
         cur = $panel.find("a[data-value="+value+"]");
-        for(i = 0; i < this.settingOptions.length; i+=1) {
-            if(this.settingOptions[i].value === value) {
-                this.settingValue = value;
-                exists = true;
-                break;
-            }
-        }
+        this.settingValue = value;
     }
-
-    if(cur.length && exists) {
-        prev.removeClass("selected");
-        cur.parent().addClass("selected");
-    }
+    prev.removeClass("selected");
+    cur.parent().addClass("selected");
+    
 
     return this;
 };
 
 EasySelector.prototype.getSettingValue = function() {
-    var setting = $(this.dom.settingsPanel).find("li.selected a").data("value");
-    return setting || null;
+    return this.settingValue || null;
 };

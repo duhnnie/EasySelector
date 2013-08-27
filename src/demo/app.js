@@ -36,7 +36,7 @@ function init() {
                 value: "concat"
             }
         ],
-        settingValue: 'nose',
+        settingValue: 'array',
         width: '100%',
         configurable: true,
         onSettingsPanelOpen: function() {

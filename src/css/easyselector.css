@@ -125,8 +125,8 @@
 
 .easyselector-list li:hover,
 .easyselector-list li a:focus,
-.easyselector-settings li:hover,
-.easyselector-settings a:focus {
+.easyselector-settings.keyboard li:hover,
+.easyselector-settings.keyboard a:focus {
   background-color: #cfcfcf;
   color: #000;
 }
@@ -142,6 +142,7 @@
   display: block;
   padding: 0.3em;
   padding-left: 1em;
+  outline: none;
 }
 
 .easyselector.expanded .easyselector-list {

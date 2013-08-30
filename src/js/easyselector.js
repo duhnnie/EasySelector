@@ -264,7 +264,7 @@ EasySelector.prototype.open = function() {
 
 EasySelector.prototype.closeSettings = function() {
     if(this.html && this.isOpenSettings) {
-        $(this.dom.settingsPanel).hide();
+        $(this.dom.settingsPanel).hide().removeClass('keyboard');
         this.isOpenSettings = false;
         if(typeof this.onSettingsPanelClose === 'function') {
             this.onSettingsPanelClose();
@@ -345,10 +345,20 @@ EasySelector.prototype.listArrowKeysHandler = function() {
         e.stopPropagation();
         if(e.keyCode === 38) {
             e.preventDefault();
-            $(e.target.parentElement).prev("li").find("a").focus();
+            if($(that.dom.settingsPanel).hasClass('keyboard')) {
+                $(e.target.parentElement).prev("li").find("a").focus();
+            } else {
+                $(that.dom.settingsPanel).find("li:last").find("a").focus();
+            }
+            $(that.dom.settingsPanel).addClass('keyboard');
         } else if(e.keyCode === 40) {  
             e.preventDefault();
-            $(e.target.parentElement).next("li").find("a").focus();
+            if($(that.dom.settingsPanel).hasClass('keyboard')) {
+                $(e.target.parentElement).next("li").find("a").focus();
+            } else {
+                $(that.dom.settingsPanel).find("li:first").find("a").focus();
+            }
+            $(that.dom.settingsPanel).addClass('keyboard');
         } else if(e.keyCode === 27) {
             that.closeSettings();
             $(that.getHTML()).focus();
@@ -394,11 +404,13 @@ EasySelector.prototype.attachListeners = function() {
     $(this.dom.settingsPanel).on('click', 'a', function(e) {
         var prev = that.settingValue;
         e.preventDefault();
-        that.settingValue = $(this).data("value");
-        $(that.dom.settingsPanel).find("li.selected").removeClass("selected");
-        $(this.parentElement).addClass("selected");
-        if(typeof that.onSettingValueChange === 'function' && prev !== that.settingValue) {
-            that.onSettingValueChange(that.getSettingValue(), prev);
+        if($(that.dom.settingsPanel).hasClass("keyboard")) {
+            that.settingValue = $(this).data("value");
+            $(that.dom.settingsPanel).find("li.selected").removeClass("selected");
+            $(this.parentElement).addClass("selected");
+            if(typeof that.onSettingValueChange === 'function' && prev !== that.settingValue) {
+                that.onSettingValueChange(that.getSettingValue(), prev);
+            }
         }
         that.closeSettings();
         $(that.getHTML()).focus();

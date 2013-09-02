@@ -1,6 +1,4 @@
-.easyselector, 
-.easyselector-list,
-.easyselector-settings {
+.easyselector, .easyselector-list, .easyselector-settings {
   border: 1px solid #cfcfcf;
 }
 
@@ -15,11 +13,16 @@
   background-image: -moz-linear-gradient(top, #f8f8f8 0%, #dddddd 100%);
   background-image: -o-linear-gradient(top, #f8f8f8 0%, #dddddd 100%);
   background-image: linear-gradient(top, #f8f8f8 0%, #dddddd 100%);
+  input {
+    font-family: inherit;
+    font-size: inherit;
+    border: none;
+    padding: 0.3em;
+    display: inline-block;
+  }
 }
 
-.easyselector input, 
-.easyselector-conf, 
-.easyselector-arrow {
+.easyselector-conf, .easyselector-arrow {
   font-family: inherit;
   font-size: inherit;
   border: none;
@@ -27,8 +30,7 @@
   display: inline-block;
 }
 
-.easyselector-conf, 
-.easyselector-arrow {
+.easyselector-conf, .easyselector-arrow {
   position: absolute;
   top: 0px;
   padding-bottom: 0px;
@@ -36,8 +38,7 @@
   height: 1.7em;
 }
 
-.easyselector-conf div, 
-.easyselector-arrow div {
+.easyselector-conf div, .easyselector-arrow div {
   height: inherit;
 }
 
@@ -51,25 +52,29 @@
   background: inherit;
 }
 
-.easyselector input[type="text"]{
-  width: 70%;
-  margin: 0px;
-  background: none;
-  outline: none;
-  text-overflow: ellipsis;
-  padding-right: 0px; 
+.easyselector {
+  input[type="text"] {
+    width: 70%;
+    margin: 0px;
+    background: none;
+    outline: none;
+    text-overflow: ellipsis;
+    padding-right: 0px;
+  }
+  a {
+    text-decoration: none;
+    color: inherit;
+  }
 }
 
-.easyselector a,
-.easyselector-settings a,
-.easyselector-list a {
+.easyselector-settings a, .easyselector-list a {
   text-decoration: none;
   color: inherit;
 }
 
 .easyselector-arrow div {
   background-image: url(../img/easyselector-sprite.png);
-  background-position:  left top;
+  background-position: left top;
   width: 9px;
   display: inline-block;
   padding: 0px;
@@ -80,30 +85,26 @@
   position: absolute;
   width: 10em;
   left: auto;
-}
-
-.easyselector-settings a:active {
-  background-color: #555;
-  color: #ddd;
-}
-
-.easyselector-settings li.selected a {
-  background-image: url(../img/right_arrow.png);
-  background-repeat: no-repeat;
-  background-position: 0px;
-  background-clip: border-box;
+  a:active {
+    background-color: #555;
+    color: #ddd;
+  }
+  li.selected a {
+    background-image: url(../img/right_arrow.png);
+    background-repeat: no-repeat;
+    background-position: 0px;
+    background-clip: border-box;
+  }
 }
 
 .easyselector.expanded {
   background: #fff;
+  .easyselector-arrow div {
+    background-position: 34px 0px;
+  }
 }
 
-.easyselector.expanded .easyselector-arrow div {
-  background-position: 34px 0px;
-}
-
-.easyselector-list,
-.easyselector-settings {
+.easyselector-list, .easyselector-settings {
   position: absolute;
   display: none;
   list-style: none;
@@ -111,33 +112,44 @@
   margin: 0px;
   background: #efefef;
   overflow-y: auto;
-  -webkit-box-shadow: 0.2em 0.2em 0.5em rgba(0, 0, 0, 0.5)
+  -webkit-box-shadow: 0.2em 0.2em 0.5em rgba(0, 0, 0, 0.5);
 }
 
 .easyselector-list {
   left: -1px;
   position: absolute;
-} 
+  li {
+    display: list-item;
+    &:hover, a:focus {
+      background-color: #cfcfcf;
+      color: #000;
+    }
+  }
+}
+
+.easyselector-settings {
+  li:hover, &.keyboard a:focus {
+    background-color: #cfcfcf;
+    color: #000;
+  }
+}
 
 .easyselector-list li {
-  display: list-item;
+  &.message {
+    font-weight: bold;
+    font-size: 0.8em;
+    padding: 0.2em;
+  }
+  a {
+    display: block;
+    padding: 0.3em;
+    padding-left: 1em;
+    outline: none;
+    text-overflow: ellipsis;
+    overflow: hidden;
+  }
 }
 
-.easyselector-list li:hover,
-.easyselector-list li a:focus,
-.easyselector-settings li:hover,
-.easyselector-settings.keyboard a:focus {
-  background-color: #cfcfcf;
-  color: #000;
-}
-
-.easyselector-list li.message {
-  font-weight: bold;
-  font-size: 0.8em;
-  padding: 0.2em;
-}
-
-.easyselector-list li a,
 .easyselector-settings li a {
   display: block;
   padding: 0.3em;
@@ -154,9 +166,8 @@
 .easyselector-conf {
   background: #dfdfdf;
   display: inline-block;
-}
-
-.easyselector-conf div {
-  width: 18px;
-  background: url('../img/gear.png') center no-repeat;
+  div {
+    width: 18px;
+    background: url('../img/gear.png') center no-repeat;
+  }
 }

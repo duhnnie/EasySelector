@@ -24,30 +24,51 @@ task :required do
         puts "Zip Tools not found.\nInstall it by running 'gem install rubyzip'"
         isOk = false
     end
+    begin
+        require 'pathname'
+    rescue LoadError
+        puts "The pathname package can't be found/loaded"
+        isOk = false
+    end
     if !isOk
         exit
     end
     puts "DONE"
 end
 
-task :removefolders do 
+task :dir do 
     system 'rm -rf build'
     system 'rm -rf dist'
-end
-
-task :css do
-    css_file = File.read 'config/css.json'
-    css_conf = JSON.parse(css_file)
     Dir.mkdir('dist/') unless File.exists?('dist/')
     Dir.mkdir('build/') unless File.exists?('build/')
     Dir.mkdir('build/css/') unless File.exists?('build/css/')
+end
+
+task :css do
+    #css_file = File.read 'config/css.json'
+    #css_conf = JSON.parse(css_file)
+    #css_conf.each do |conf|
+    #    file_name = conf["name"].gsub('##PROJECT_NAME##', getProjectName)
+    #    file_name = file_name.gsub('##VERSION##', getVersion)
+    #    system 'cp ' + conf["file"] + ' ' + 'dist/' + file_name
+    #    system 'cp ' + 'dist/' + file_name + ' ' + 'build/css/'
+    #end
+    #puts "DONE"
+end
+
+task :styles do
+    puts "Generating stylesheets ..."
+    system "compass compile"
+    css_file = File.read 'config/css.json'
+    css_conf = JSON.parse(css_file)
     css_conf.each do |conf|
         file_name = conf["name"].gsub('##PROJECT_NAME##', getProjectName)
         file_name = file_name.gsub('##VERSION##', getVersion)
-        system 'cp ' + conf["file"] + ' ' + 'dist/' + file_name
-        system 'cp ' + 'dist/' + file_name + ' ' + 'build/css/'
+        dir = Pathname.new(conf["file"]).dirname.to_s
+        system 'mv ' + conf["file"] + ' ' + dir + "/" + file_name
+        system 'cp ' + dir + "/" + file_name + ' ' + 'dist/' + file_name
     end
-    puts "DONE"
+    puts "DONE" 
 end
 
 task :js => :required do
@@ -101,7 +122,8 @@ end
 desc "Build EasySelector"
 task :build do |t, args|
   Rake::Task['required'].execute
-  Rake::Task['removefolders'].execute 
+  Rake::Task['dir'].execute 
+  Rake::Task['styles'].execute
   Rake::Task['css'].execute
   Rake::Task['js'].execute
   Rake::Task['demo'].execute

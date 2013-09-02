@@ -1,6 +1,6 @@
 [
     {
-        "file": "src/css/easyselector.css",
+        "file": "build/css/easyselector.css",
         "name": "##PROJECT_NAME##-##VERSION##.css"
     }
 ]

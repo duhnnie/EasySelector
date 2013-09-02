@@ -15,6 +15,7 @@ var EasySelector = function(settings) {
     this.options = [];
     this.configurable = null;
     this.settingValue = null;
+    this.settingsButtonTooltip = null;
     this.onChange = null;
     this.onSettingValueChange = null;
     this.onSettingsPanelOpen = null;
@@ -35,6 +36,7 @@ EasySelector.prototype.init = function(settings) {
         settingOptions: [],
         configurable: true,
         settingValue: null,
+        settingsButtonTooltip: 'settings',
         onSettingValueChange: null,
         onChange: null,
         onSettingsPanelOpen: null,
@@ -64,12 +66,21 @@ EasySelector.prototype.init = function(settings) {
     this.id = defaults.id;
     this.htmlCreationProcessFinished = false;
 
-    this.setOptions(defaults.options)
+    this.setSettingsButtonTooltip(defaults.settingsButtonTooltip)
+        .setOptions(defaults.options)
         .setListMaxHeight(defaults.listMaxHeight)
         .setWidth(defaults.width)
         .setSettingOptions(defaults.settingOptions)
         .setIsConfigurable(defaults.configurable)
         .setSettingValue(defaults.settingValue || "[first]");
+};
+
+EasySelector.prototype.setSettingsButtonTooltip = function(tooltipLabel) {
+    this.settingsButtonTooltip = tooltipLabel;
+    if(this.html) {
+        this.dom.settings.title = tooltipLabel;
+    }
+    return this;
 };
 
 EasySelector.prototype.setIsConfigurable = function(conf) {
@@ -159,6 +170,7 @@ EasySelector.prototype.createHTMLOption = function(label, value) {
     link = document.createElement('a');
     link.appendChild(document.createTextNode(label));
     link.setAttribute("data-value", value);
+    link.title = label;
     link.href = "#";
     listItem.appendChild(link);
 
@@ -369,7 +381,7 @@ EasySelector.prototype.listArrowKeysHandler = function() {
 };
 
 EasySelector.prototype.attachListeners = function() {
-    var that = this;
+    var that = this, clickEventInitiator = 'keyboard';
     $(this.html).on('keydown', function(e) {
         if(e.keyCode === 13) {
             $(that.dom.input).trigger('focus');
@@ -402,9 +414,13 @@ EasySelector.prototype.attachListeners = function() {
     $(this.dom.settingsPanel).on('keydown', this.listArrowKeysHandler());
 
     $(this.dom.settingsPanel).on('click', 'a', function(e) {
-        var prev = that.settingValue;
+        var prev = that.settingValue, pass = false;
         e.preventDefault();
-        if($(that.dom.settingsPanel).hasClass("keyboard")) {
+        if(clickEventInitiator === 'mouse' || (clickEventInitiator === 'keyboard' && $(that.dom.settingsPanel).hasClass("keyboard"))) {
+            pass = true;
+        }
+
+        if(pass) {
             that.settingValue = $(this).data("value");
             $(that.dom.settingsPanel).find("li.selected").removeClass("selected");
             $(this.parentElement).addClass("selected");
@@ -414,6 +430,10 @@ EasySelector.prototype.attachListeners = function() {
         }
         that.closeSettings();
         $(that.getHTML()).focus();
+    }).on('mousedown', 'a', function() {
+        clickEventInitiator = 'mouse';
+    }).on('keydown', 'a', function() {
+        clickEventInitiator = 'keyboard';
     });
 
     $(this.dom.input).on('keyup', function(e) {
@@ -474,6 +494,7 @@ EasySelector.prototype.createHTML = function() {
     settings = document.createElement("a");
     settings.className = 'easyselector-conf';
     settings.href = '#';
+    settings.title = this.settingsButtonTooltip;
     aux = aux.cloneNode(true);
     settings.appendChild(aux);
 

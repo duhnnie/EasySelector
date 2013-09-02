@@ -78,7 +78,7 @@
 .easyselector-settings {
   right: -1px;
   position: absolute;
-  width: 5em;
+  width: 10em;
   left: auto;
 }
 
@@ -125,7 +125,7 @@
 
 .easyselector-list li:hover,
 .easyselector-list li a:focus,
-.easyselector-settings.keyboard li:hover,
+.easyselector-settings li:hover,
 .easyselector-settings.keyboard a:focus {
   background-color: #cfcfcf;
   color: #000;
@@ -143,6 +143,8 @@
   padding: 0.3em;
   padding-left: 1em;
   outline: none;
+  text-overflow: ellipsis;
+  overflow: hidden;
 }
 
 .easyselector.expanded .easyselector-list {

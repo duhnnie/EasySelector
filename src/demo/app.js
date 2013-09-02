@@ -39,6 +39,7 @@ function init() {
         settingValue: 'array',
         width: '100%',
         configurable: true,
+        settingsButtonTooltip: 'my settings',
         onSettingsPanelOpen: function() {
             console.log(this, "open settings");
         },

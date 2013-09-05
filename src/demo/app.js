@@ -26,6 +26,10 @@ function init() {
         ],
         settingOptions: [
             {
+                label: "",
+                value: ""
+            },
+            {
                 label: "set",
                 value: "set"
             }, {
@@ -36,7 +40,7 @@ function init() {
                 value: "concat"
             }
         ],
-        settingValue: 'array',
+        settingValue: '',
         width: '100%',
         configurable: true,
         settingsButtonTooltip: 'my settings',

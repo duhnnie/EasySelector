@@ -168,9 +168,13 @@ EasySelector.prototype.createHTMLOption = function(label, value) {
 
     listItem = document.createElement("li");
     link = document.createElement('a');
-    link.appendChild(document.createTextNode(label));
     link.setAttribute("data-value", value);
-    link.title = label;
+    if(label || value) {
+        link.appendChild(document.createTextNode(label));
+        link.title = label || value;   
+    } else {
+        link.innerHTML = "&nbsp;";
+    }
     link.href = "#";
     listItem.appendChild(link);
 

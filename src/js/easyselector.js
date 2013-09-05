@@ -473,11 +473,13 @@ EasySelector.prototype.attachListeners = function() {
     });
 
     $(this.dom.input).on('keyup', function(e) {
+        e.stopPropagation();
         if(e.keyCode !== 13 && e.keyCode !== 27) {
             that.showSuggestions($.trim(this.value));
         }
     }).on('keydown', function(e) {
         e.stopPropagation();
+        e.preventDefault();
         if(e.keyCode === 27) {
             that.setSelectedItem(that.label, that.getValue());
             that.closeAndFocus();

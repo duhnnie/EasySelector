@@ -30,7 +30,7 @@ function init() {
                 value: ""
             },
             {
-                label: "set",
+                label: "set eweqr ewqrrw r rqewr wafaqwer ewreqwr qwer qwer qwer qw erqwer qwer",
                 value: "set"
             }, {
                 label: "array",
@@ -41,6 +41,7 @@ function init() {
             }
         ],
         settingValue: '',
+        settingsPanelWidth: 400,
         width: '100%',
         configurable: true,
         settingsButtonTooltip: 'my settings',

@@ -16,6 +16,7 @@ var EasySelector = function(settings) {
     this.configurable = null;
     this.settingValue = null;
     this.settingsButtonTooltip = null;
+    this.settingsPanelWidth = null;
     this.onChange = null;
     this.onSettingValueChange = null;
     this.onSettingsPanelOpen = null;
@@ -37,6 +38,7 @@ EasySelector.prototype.init = function(settings) {
         configurable: true,
         settingValue: null,
         settingsButtonTooltip: 'settings',
+        settingsPanelWidth: null,
         onSettingValueChange: null,
         onChange: null,
         onSettingsPanelOpen: null,
@@ -67,12 +69,24 @@ EasySelector.prototype.init = function(settings) {
     this.htmlCreationProcessFinished = false;
 
     this.setSettingsButtonTooltip(defaults.settingsButtonTooltip)
+        .setSettingsPanelWidth(defaults.settingsPanelWidth)
         .setOptions(defaults.options)
         .setListMaxHeight(defaults.listMaxHeight)
         .setWidth(defaults.width)
         .setSettingOptions(defaults.settingOptions)
         .setIsConfigurable(defaults.configurable)
         .setSettingValue(defaults.settingValue || "[first]");
+};
+
+EasySelector.prototype.setSettingsPanelWidth = function(width) {
+    if(typeof width === 'number') {
+        this.settingsPanelWidth = width;
+        if(this.dom && this.dom.settingsPanel) {
+            this.dom.settingsPanel.style.width = width + 'px';
+        }
+    }
+
+    return this;
 };
 
 EasySelector.prototype.setSettingsButtonTooltip = function(tooltipLabel) {
@@ -525,6 +539,7 @@ EasySelector.prototype.createHTML = function() {
     container.id = this.id;
     this.html = container;
 
+    this.setSettingsPanelWidth(this.settingsPanelWidth);
     this.setSettingOptions(this.settingOptions);
     this.setOptions(this.options);
     this.setListMaxHeight(this.listMaxHeight);

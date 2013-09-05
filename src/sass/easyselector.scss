@@ -85,7 +85,7 @@
   position: absolute;
   width: 10em;
   left: auto;
-  a:active {
+  /*a:active {
     background-color: #555;
     color: #ddd;
   }
@@ -95,7 +95,7 @@
     background-position: 0px;
     background-clip: border-box;
     background-color: #b0b0b0;
-  }
+  }*/
 }
 
 .easyselector.expanded {
@@ -119,17 +119,18 @@
 .easyselector-list {
   left: -1px;
   position: absolute;
-  li {
+  /*li {
     display: list-item;
     &:hover, a:focus {
       background-color: #cfcfcf;
       color: #000;
     }
-  }
+  }*/
 }
-
+.easyselector-list,
 .easyselector-settings {
-  li:hover, &.keyboard a:focus {
+  li:hover, 
+  &.keyboard a:focus {
     background-color: #cfcfcf;
     color: #000;
   }
@@ -141,25 +142,34 @@
     font-size: 0.8em;
     padding: 0.2em;
   }
-  a {
-    display: block;
-    padding: 0.3em;
-    padding-left: 1em;
-    outline: none;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    overflow: hidden;
-  }
 }
 
-.easyselector-settings li a {
-  display: block;
-  padding: 0.3em;
-  padding-left: 1em;
-  outline: none;
-  text-overflow: ellipsis;
-  white-space: nowrap;
-  overflow: hidden;
+.easyselector-list,
+.easyselector-settings {
+  li {
+    a {
+      display: block;
+      padding: 0.3em;
+      padding-left: 1em;
+      outline: none;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+      overflow: hidden;  
+
+      &:active {
+        background-color: #555;
+        color: #ddd;
+      }
+    }
+
+    &.selected a {
+      background-image: url(../img/right_arrow.png);
+      background-repeat: no-repeat;
+      background-position: 0px;
+      background-clip: border-box;
+      background-color: #b0b0b0;
+    }
+  }
 }
 
 .easyselector.expanded .easyselector-list {

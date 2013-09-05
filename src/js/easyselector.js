@@ -213,7 +213,7 @@ EasySelector.prototype.addOption = function(label, value, selected) {
 };
 
 EasySelector.prototype.setOptions = function(options, useBackup) {
-    var i;
+    var i, option;
 
     if(options.hasOwnProperty("length") && options.push) {
         if(this.html) {
@@ -222,7 +222,11 @@ EasySelector.prototype.setOptions = function(options, useBackup) {
         if(useBackup) {
             if(this.html && this.listHtmlBackup) {
                 for(i = 0; i < this.listHtmlBackup.childNodes.length; i+=1) {
-                    this.dom.list.appendChild(this.listHtmlBackup.childNodes[i].cloneNode(true));
+                    option = this.listHtmlBackup.childNodes[i].cloneNode(true);
+                    this.dom.list.appendChild(option);
+                    if($(option).find("a").data("value") === this.getValue()) {
+                        $(option).addClass("selected");
+                    }
                 }
             }
         } else {
@@ -342,7 +346,7 @@ EasySelector.prototype.setSelectedItem = function(label, value) {
 };
 
 EasySelector.prototype.showSuggestions = function(text) {
-    var i, textLength, msg, showing = 0;
+    var i, textLength, msg, showing = 0, option;
     this.existingValue = false;
     if(this.html && typeof text === 'string') {
         if(text) {
@@ -351,7 +355,11 @@ EasySelector.prototype.showSuggestions = function(text) {
             $(this.dom.list).empty();
             for(i = 0; i < this.options.length; i+=1) {
                 if(this.options[i].label.substr(0, textLength).toLowerCase() === text || this.options[i].value.substr(0, textLength).toLowerCase() === text) {
-                    this.dom.list.appendChild(this.createHTMLOption(this.options[i].label, this.options[i].value));
+                    option = this.createHTMLOption(this.options[i].label, this.options[i].value);
+                    if(this.options[i].value === this.getValue()) {
+                        $(option).addClass("selected");
+                    }
+                    this.dom.list.appendChild(option);
                     showing += 1;
                 }
             }
@@ -372,25 +380,35 @@ EasySelector.prototype.showSuggestions = function(text) {
 EasySelector.prototype.listArrowKeysHandler = function() {
     var that = this;
     return function(e) {
+        var list, closeFunction;
         e.stopPropagation();
+        list = this;
+        if(this === that.dom.list) {
+            closeFunction = that.close;
+        } else if(this === that.dom.settingsPanel) {
+            closeFunction = that.closeSettings;
+        } else {
+            return;
+        }
+
         if(e.keyCode === 38) {
             e.preventDefault();
-            if($(that.dom.settingsPanel).hasClass('keyboard')) {
+            if($(list).hasClass('keyboard')) {
                 $(e.target.parentElement).prev("li").find("a").focus();
             } else {
-                $(that.dom.settingsPanel).find("li:last").find("a").focus();
+                $(list).find("li:last").find("a").focus();
             }
-            $(that.dom.settingsPanel).addClass('keyboard');
+            $(list).addClass('keyboard');
         } else if(e.keyCode === 40) {  
             e.preventDefault();
-            if($(that.dom.settingsPanel).hasClass('keyboard')) {
+            if($(list).hasClass('keyboard')) {
                 $(e.target.parentElement).next("li").find("a").focus();
             } else {
-                $(that.dom.settingsPanel).find("li:first").find("a").focus();
+                $(list).find("li:first").find("a").focus();
             }
-            $(that.dom.settingsPanel).addClass('keyboard');
+            $(list).addClass('keyboard');
         } else if(e.keyCode === 27) {
-            that.closeSettings();
+            closeFunction();
             $(that.getHTML()).focus();
         } else if(e.keyCode === 9 && e.target === $(this).find('a:last').get(0)) {
             e.preventDefault();
@@ -467,7 +485,7 @@ EasySelector.prototype.attachListeners = function() {
             that.processCurrentInput();
             that.closeAndFocus();
         } else if(e.keyCode === 40) {
-            $(that.dom.list).find("a").eq(0).focus();
+            $(that.dom.list).addClass('keyboard').find("a").eq(0).focus();
         }
     }).on('focus', function() {
         that.setOptions(that.options, true);

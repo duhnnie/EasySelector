@@ -310,7 +310,7 @@ EasySelector.prototype.closeSettings = function() {
 EasySelector.prototype.close = function() {
     if(this.html && this.isOpen) {
         $(this.html).removeClass("expanded");
-        $(this.dom.list).hide();
+        $(this.dom.list).hide().removeClass("keyboard");
         this.isOpen = false;
         if(!this.existingValue) {
             this.processCurrentInput();
@@ -479,14 +479,16 @@ EasySelector.prototype.attachListeners = function() {
         }
     }).on('keydown', function(e) {
         e.stopPropagation();
-        e.preventDefault();
         if(e.keyCode === 27) {
+            e.preventDefault();
             that.setSelectedItem(that.label, that.getValue());
             that.closeAndFocus();
         } else if(e.keyCode === 13) {
+            e.preventDefault();
             that.processCurrentInput();
             that.closeAndFocus();
         } else if(e.keyCode === 40) {
+            e.preventDefault();
             $(that.dom.list).addClass('keyboard').find("a").eq(0).focus();
         }
     }).on('focus', function() {
